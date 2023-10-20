@@ -14,7 +14,7 @@ public class AlphaBetaMoveChooser extends MoveChooser {
      */
     public AlphaBetaMoveChooser(int searchDepth) {
         // Add object initialisation code...
-        super("MyAwesomeAgent"+searchDepth,searchDepth);
+        super("MyAwesomeAgent",searchDepth);
     }
 
     /**
