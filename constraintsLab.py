@@ -21,13 +21,13 @@ def Travellers(pairList):
 # no two travellers return from the same destination
   problem.addConstraint(constraint.AllDifferentConstraint(), d_variables)
   # Olga is leaving 2 hours before the traveller from Yemen
-  for person in people:
-    problem.addConstraint((
-    lambda x,y,z:
-    (y != 'yemen')
-    or ((x == '4:30') and (z == '2:30'))
-    or ((x == '5:30') and (z == '3:30'))
-    ), ['t_'+person, 'd_'+person, 't_olga'])
+  # for person in people:
+  #   problem.addConstraint((
+  #   lambda x,y,z:
+  #   (y != 'yemen')
+  #   or ((x == '4:30') and (z == '2:30'))
+  #   or ((x == '5:30') and (z == '3:30'))
+  #   ), ['t_'+person, 'd_'+person, 't_olga'])
 
   # Claude is either the person leaving at 2:30 pm or the traveller leaving at 3:30 pm.
   problem.addConstraint((
