@@ -69,12 +69,12 @@ def Travellers(pairList):
       person = tuple[0]
       if((tuple[1].find(':30') != -1)):
         problem.addConstraint((
-          lambda y:
+          lambda y, tuple = tuple:
           (y == tuple[1])
           ),['t_'+person])
       else:
         problem.addConstraint((
-          lambda y:
+          lambda y, tuple = tuple:
           (y == tuple[1])
           ),['d_'+person])
 
