@@ -33,7 +33,20 @@ class VisionTasks(VisionTasksBase):
         :return: matches for descriptors
         :rtype:  list
         """
-        return []
+        bf = cv2.BFMatcher()
+        result = []
+     
+        matches = bf.knnMatch(des1, des2, k = 100)
+        for match in matches:
+            l = []
+            for features in match:
+                if (features.distance <= threshold ):
+                    l.append(features)
+                    
+            result.append(l)
+        
+
+        return result
 
     def nn(self, des1, des2, threshold=None):
         """Implements feature matching based on nearest neighbour
@@ -48,7 +61,21 @@ class VisionTasks(VisionTasksBase):
         :return: matches for descriptors
         :rtype:  list
         """
-        return []
+        bf = cv2.BFMatcher()
+        result = []
+     
+        matches = bf.knnMatch(des1, des2, k = 1)
+        
+        for match in matches:
+            for feature in match:
+                l = []
+                if((threshold != None and feature.distance <= threshold) or (threshold == None)):
+                    l.append(feature)
+                  
+                result.append(l)
+                    
+            
+        return result
 
     def nndr(self, des1, des2, threshold):
         """Implements feature matching based on nearest neighbour distance ratio
@@ -63,7 +90,18 @@ class VisionTasks(VisionTasksBase):
         :return: matches for descriptors
         :rtype:  list
         """
-        return []
+        bf = cv2.BFMatcher()
+        result = []
+     
+        matches = bf.knnMatch(des1, des2, k = 2)
+        
+        for match in matches:
+            l = []
+            if((match[0].distance/match[1].distance) <= threshold):
+                  l.append(match[0])
+            result.append(l)
+
+        return result
 
     def matching_info(self, kp1, kp2, feature_matches):
         """Collects information about the matches of some feature
@@ -80,7 +118,22 @@ class VisionTasks(VisionTasksBase):
                  distances for feature matches in current image
         :rtype:  tuple, list, list
         """
-        return (0,0), [], []
+        
+        coord = []
+        distances = []
+        t = (0,0)
+        qindex = 0
+        tindex = 0
+        if (feature_matches):
+            for match in feature_matches:
+                qindex = match.queryIdx
+                t = (int)(kp1[qindex].pt[0]), ((int)(kp1[qindex].pt[1]))
+                tindex = match.trainIdx
+                tup = ( (int)(kp2[tindex].pt[0] ), ( (int)(kp2[tindex].pt[1])) )
+                coord.append( tup )
+                distances.append(match.distance)
+
+        return t, coord, distances
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
