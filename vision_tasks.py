@@ -40,7 +40,7 @@ class VisionTasks(VisionTasksBase):
         for match in matches:
             l = []
             for features in match:
-                if (features.distance <= threshold ):
+                if (features.distance < threshold ):
                     l.append(features)
                     
             result.append(l)
@@ -69,7 +69,7 @@ class VisionTasks(VisionTasksBase):
         for match in matches:
             for feature in match:
                 l = []
-                if((threshold != None and feature.distance <= threshold) or (threshold == None)):
+                if((threshold != None and feature.distance < threshold) or (threshold == None)):
                     l.append(feature)
                   
                 result.append(l)
@@ -97,7 +97,7 @@ class VisionTasks(VisionTasksBase):
         
         for match in matches:
             l = []
-            if((match[0].distance/match[1].distance) <= threshold):
+            if((match[0].distance/match[1].distance) < threshold):
                   l.append(match[0])
             result.append(l)
 
