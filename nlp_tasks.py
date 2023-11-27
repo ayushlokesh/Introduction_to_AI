@@ -32,7 +32,15 @@ class NLPTasks(NLPTasksBase):
         :return: preprocessed lines
         :rtype:  list[str]
         """
-        return []
+        translator = str.maketrans(string.punctuation, " " * len(string.punctuation))
+        removed_punc = [text.lower().strip().translate(translator) for text in texts]
+        processed_list = removed_punc
+        if self.stopwords_list:
+          processed_list = [' '.join([word for word in text.split() if word.lower() not in self.stopwords_list]) for text in removed_punc]
+          stemmed_list = processed_list
+        if self.stemmer:
+          stemmed_list = [' '.join([self.stemmer.stemWord(word) for word in text.split()]) for text in processed_list]
+        return stemmed_list
 
     def calc_IDF(self, term):
         """Calculates Inverse Document Frequency (IDF)
@@ -44,7 +52,16 @@ class NLPTasks(NLPTasksBase):
         :return: IDF
         :rtype:  float
         """
-        return 0.0
+        count = 0.0
+        total_doc = len(self.preprocessed_corpus)
+    
+        for sentence in self.preprocessed_corpus:
+          if ((term) in sentence.split()):
+            count += 1
+
+        idf = math.log10( (total_doc - count + 0.5) / (count + 0.5) )
+
+        return idf
 
     def calc_BM25_score(self, index):
         """Calculates BM25 score
@@ -56,7 +73,26 @@ class NLPTasks(NLPTasksBase):
         :return: BM25
         :rtype:  float
         """
-        return 0.0
+        count = 0.0
+        split_corpus = [doc.split() for doc in self.preprocessed_corpus]
+        num_of_doc = len(split_corpus)
+        avg_len = 0.0
+        for doc in split_corpus:
+          avg_len += len(doc)
+        
+        avg_len = avg_len / num_of_doc
+        split_question = self.preprocessed_question.split()
+        split_doc = self.preprocessed_corpus[index].split()
+        print(split_question)
+        doc_len = len(split_doc)
+        for word in split_question:
+          idf = self.calc_IDF(word)
+          tf = split_doc.count(word)
+          
+          count = count + (idf * ((tf*3)/(tf + 2*(0.25 + 0.75*(doc_len/avg_len)))))
+          
+        
+        return count
 
     def find_top_matches(self, n):
         """Finds the top scoring documents
@@ -68,7 +104,16 @@ class NLPTasks(NLPTasksBase):
         :return: top scoring original documents
         :rtype:  list[str]
         """
-        return []
+        results = [(i,self.calc_BM25_score(i)) for i in range(len(self.preprocessed_corpus))]
+
+        sorted_results = sorted((results), key=lambda x: x[1], reverse=True)
+        
+        matches = []
+        for result in sorted_results:
+          matches.append(self.original_corpus[result[0]])
+      
+        matches = matches[:3]
+        return matches
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
