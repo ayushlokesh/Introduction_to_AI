@@ -83,12 +83,11 @@ class NLPTasks(NLPTasksBase):
         avg_len = avg_len / num_of_doc
         split_question = self.preprocessed_question.split()
         split_doc = self.preprocessed_corpus[index].split()
-        print(split_question)
         doc_len = len(split_doc)
         for word in split_question:
           idf = self.calc_IDF(word)
           tf = split_doc.count(word)
-          
+         
           count = count + (idf * ((tf*3)/(tf + 2*(0.25 + 0.75*(doc_len/avg_len)))))
           
         
@@ -112,7 +111,7 @@ class NLPTasks(NLPTasksBase):
         for result in sorted_results:
           matches.append(self.original_corpus[result[0]])
       
-        matches = matches[:3]
+        matches = matches[:n]
         return matches
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
